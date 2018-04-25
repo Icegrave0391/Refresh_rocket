@@ -15,6 +15,7 @@
 		08D232B9209084390080EE2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D232B8209084390080EE2F /* main.m */; };
 		08D232C32090843A0080EE2F /* Refresh_rocketTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D232C22090843A0080EE2F /* Refresh_rocketTests.m */; };
 		08D232CE2090843A0080EE2F /* Refresh_rocketUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D232CD2090843A0080EE2F /* Refresh_rocketUITests.m */; };
+		08D232E3209095CD0080EE2F /* UIView+UIViewPlus.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D232E2209095CD0080EE2F /* UIView+UIViewPlus.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,8 @@
 		08D232C92090843A0080EE2F /* Refresh_rocketUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Refresh_rocketUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		08D232CD2090843A0080EE2F /* Refresh_rocketUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Refresh_rocketUITests.m; sourceTree = "<group>"; };
 		08D232CF2090843A0080EE2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		08D232E1209095CC0080EE2F /* UIView+UIViewPlus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+UIViewPlus.h"; sourceTree = "<group>"; };
+		08D232E2209095CD0080EE2F /* UIView+UIViewPlus.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+UIViewPlus.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +105,8 @@
 			isa = PBXGroup;
 			children = (
 				08D232A9209084390080EE2F /* AppDelegate.h */,
+				08D232E1209095CC0080EE2F /* UIView+UIViewPlus.h */,
+				08D232E2209095CD0080EE2F /* UIView+UIViewPlus.m */,
 				08D232AA209084390080EE2F /* AppDelegate.m */,
 				08D232AC209084390080EE2F /* ViewController.h */,
 				08D232AD209084390080EE2F /* ViewController.m */,
@@ -268,6 +273,7 @@
 				08D232AE209084390080EE2F /* ViewController.m in Sources */,
 				08D232B9209084390080EE2F /* main.m in Sources */,
 				08D232AB209084390080EE2F /* AppDelegate.m in Sources */,
+				08D232E3209095CD0080EE2F /* UIView+UIViewPlus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
