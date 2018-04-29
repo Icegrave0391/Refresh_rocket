@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		083E6CA720956B9F000E4993 /* CARocketLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 083E6CA620956B9F000E4993 /* CARocketLayer.m */; };
 		08D232AB209084390080EE2F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D232AA209084390080EE2F /* AppDelegate.m */; };
 		08D232AE209084390080EE2F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D232AD209084390080EE2F /* ViewController.m */; };
 		08D232B1209084390080EE2F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08D232AF209084390080EE2F /* Main.storyboard */; };
@@ -36,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		083E6CA520956B9F000E4993 /* CARocketLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CARocketLayer.h; sourceTree = "<group>"; };
+		083E6CA620956B9F000E4993 /* CARocketLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CARocketLayer.m; sourceTree = "<group>"; };
 		08D232A6209084390080EE2F /* Refresh_rocket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Refresh_rocket.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08D232A9209084390080EE2F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		08D232AA209084390080EE2F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -107,6 +110,8 @@
 				08D232A9209084390080EE2F /* AppDelegate.h */,
 				08D232E1209095CC0080EE2F /* UIView+UIViewPlus.h */,
 				08D232E2209095CD0080EE2F /* UIView+UIViewPlus.m */,
+				083E6CA520956B9F000E4993 /* CARocketLayer.h */,
+				083E6CA620956B9F000E4993 /* CARocketLayer.m */,
 				08D232AA209084390080EE2F /* AppDelegate.m */,
 				08D232AC209084390080EE2F /* ViewController.h */,
 				08D232AD209084390080EE2F /* ViewController.m */,
@@ -272,6 +277,7 @@
 			files = (
 				08D232AE209084390080EE2F /* ViewController.m in Sources */,
 				08D232B9209084390080EE2F /* main.m in Sources */,
+				083E6CA720956B9F000E4993 /* CARocketLayer.m in Sources */,
 				08D232AB209084390080EE2F /* AppDelegate.m in Sources */,
 				08D232E3209095CD0080EE2F /* UIView+UIViewPlus.m in Sources */,
 			);

@@ -8,13 +8,15 @@
 
 #import "ViewController.h"
 #import "UIView+UIViewPlus.h"
+#import "CARocketLayer.h"
 @interface ViewController ()<UIScrollViewDelegate, CAAnimationDelegate>
 
 @property(nonatomic, strong) CAShapeLayer * shapeLayer ;
-@property(nonatomic, strong) CAShapeLayer * rockerLayer ;
+@property(nonatomic, strong) CARocketLayer * rockerLayer ;
 @property(nonatomic, strong) UIScrollView * scrollView ;
-@property(nonatomic, strong) CAShapeLayer * circleLayer ;
-@property(nonatomic, strong) NSTimer * timer ;
+@property(nonatomic, strong) CAShapeLayer * circleLayer ;    //手势触控位置圆圈
+@property(nonatomic, strong) NSTimer * timer ;    //计时 用于判断手势状态改变 触发火箭抖动
+@property(nonatomic, strong) NSMutableArray * circleArr ;
 
 @end
 
@@ -28,14 +30,15 @@
     return _shapeLayer ;
 }
 
--(CAShapeLayer *)rockerLayer{
+-(CARocketLayer *)rockerLayer{
     if(!_rockerLayer){
-        _rockerLayer = [CAShapeLayer layer] ;
-        self.rockerLayer.frame = CGRectMake(self.view.center.x - 32, -64 , 64, 64) ;
-        self.rockerLayer.contents = (__bridge id _Nullable)([UIImage imageNamed:@"2-Rocket"].CGImage) ;
-        [self.shapeLayer addSublayer:self.rockerLayer] ;
+        _rockerLayer = [CARocketLayer layer] ;
+        _rockerLayer.frame = CGRectMake(self.view.center.x - 32, -64 , 64, 64) ;
+        _rockerLayer.contents = (__bridge id _Nullable)([UIImage imageNamed:@"2-Rocket"].CGImage) ;
+        _rockerLayer.dragDown = YES ;
+        [self.shapeLayer addSublayer:_rockerLayer] ;
     }
-    return  _rockerLayer ;
+    return _rockerLayer ;
 }
 -(CAShapeLayer *)circleLayer{
     if(!_circleLayer){
@@ -45,6 +48,12 @@
         [self.scrollView.layer addSublayer:_circleLayer] ;
     }
     return _circleLayer ;
+}
+-(NSMutableArray *)circleArr{
+    if(!_circleArr){
+        _circleArr = [NSMutableArray array] ;
+    }
+    return _circleArr ;
 }
 
 - (void)viewDidLoad {
@@ -67,11 +76,7 @@
 #pragma mark 实现方法
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    NSLog(@"scroll") ;
     //初始化手势圆点
-    CGPoint translatedPoint = [scrollView.panGestureRecognizer translationInView:scrollView] ;
-    //向下滑动
-    if(translatedPoint.y > 0){
         if(self.scrollView.tracking == YES ){
             CGPoint currentCenterPoint = [self.scrollView.panGestureRecognizer locationInView:self.scrollView] ;
             
@@ -85,10 +90,8 @@
             self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5f target:self selector:@selector(stateDetection) userInfo:nil repeats:YES] ;
             [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes] ;
         }
-        
-        
-        //展示shapeLayer
-        
+    
+        //展示shapeLayer以及火箭rocketlayer
         CGFloat height = -scrollView.contentOffset.y ;    //scroll down => height < 0
         UIBezierPath * path = [UIBezierPath bezierPath] ;
         [path moveToPoint:CGPointMake(0, 0)] ;
@@ -97,14 +100,16 @@
         if(height <= 100){
             [path addLineToPoint:CGPointMake(self.view.width, height)] ;
             [path addLineToPoint:CGPointMake(0, height)] ;
-            CABasicAnimation * animation = [CABasicAnimation animation] ;
-            //火箭位置
-            animation.keyPath = @"position" ;
-            animation.duration = 0.1f ;
-            animation.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.center.x, height - 32)] ;
-            [self.rockerLayer addAnimation:animation forKey:nil] ;
-            [self.rockerLayer setPosition:CGPointMake(self.view.center.x, height -32)] ;
-            //add animation
+            //火箭是在下拉状态
+            if(self.rockerLayer.dragDown == YES){
+                CABasicAnimation * animation = [CABasicAnimation animation] ;
+                //火箭位置
+                animation.keyPath = @"position" ;
+                animation.duration = 0.1f ;
+                animation.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.center.x, height - 32)] ;
+                [self.rockerLayer addAnimation:animation forKey:nil] ;
+                [self.rockerLayer setPosition:CGPointMake(self.view.center.x, height -32)] ;
+            }
             
         }else{
             //add animation
@@ -117,22 +122,26 @@
             //确定曲线最低点
             CGPoint P = CGPointMake(0.25*(P0.x+P2.x)+0.5*P1.x, 0.25*(P0.y+P2.y)+0.5*P1.y) ;
             
-            //火箭在曲线最低点上方
-            CABasicAnimation * animation = [CABasicAnimation animation] ;
-            animation.keyPath = @"position" ;
-            animation.duration = 0.1f ;
-            animation.toValue = [NSValue valueWithCGPoint:CGPointMake(P.x, P.y - 32)] ;
-            [self.rockerLayer addAnimation:animation forKey:nil] ;
-            [self.rockerLayer setPosition:CGPointMake(P.x, P.y -32)] ;
+            //火箭在曲线最低点上方(火箭在下拉状态)
+            if(self.rockerLayer.dragDown == YES){
+                CABasicAnimation * animation = [CABasicAnimation animation] ;
+                animation.keyPath = @"position" ;
+                animation.duration = 0.1f ;
+                animation.toValue = [NSValue valueWithCGPoint:CGPointMake(P.x, P.y - 32)] ;
+                [self.rockerLayer addAnimation:animation forKey:nil] ;
+                [self.rockerLayer setPosition:CGPointMake(P.x, P.y -32)] ;
+            }
         }
         
         [path closePath] ;
         self.shapeLayer.path = path.CGPath ;
-    }
+
 }
 
 
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+    //设置火箭状态
+    self.rockerLayer.dragDown = NO ;
     CGPoint currentCenterPoint = [self.scrollView.panGestureRecognizer locationInView:self.scrollView] ;
     
     //手指位置圆点
@@ -146,14 +155,15 @@
     //火箭飞天
     CABasicAnimation * fly = [CABasicAnimation animation] ;
     fly.keyPath = @"position" ;
-    fly.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.center.x, -50)] ;
+    fly.toValue = [NSValue valueWithCGPoint:CGPointMake(self.view.center.x, -32)] ;
     fly.duration = 0.06f ;
     fly.removedOnCompletion = NO ;
     fly.fillMode = kCAFillModeForwards ;
     fly.delegate = self ;
     [self.rockerLayer addAnimation:fly forKey:@"fly"] ;
-    [self.rockerLayer setPosition:CGPointMake(self.view.center.x, -50)] ;
-    self.rockerLayer = nil ;
+    [self.rockerLayer setPosition:CGPointMake(self.view.center.x, -32)] ;
+    //小圈圈出现
+    [self setCirclesWithFrame:CGRectMake(0, 0, self.view.width, 100)] ;
     
     //手势圆圈fade
     CABasicAnimation * animation = [CABasicAnimation animation] ;
@@ -219,8 +229,42 @@
     if([self.rockerLayer animationForKey:@"fly"] == anim){
         NSLog(@"finish") ;
         [self.rockerLayer removeAnimationForKey:@"fly"] ;
-        self.rockerLayer = nil ;
+//        self.rockerLayer = nil ;
     }
+}
+
+//随机创建火箭飞天后的小圆圈(并没有卵用
+-(void)setCirclesWithFrame:(CGRect)frame{
+    for(int i = 0 ; i < 5 ; i++){
+        CGPoint center = CGPointMake(arc4random()%(int)frame.size.width, arc4random()%(int)frame.size.height) ;
+        UIBezierPath * path = [UIBezierPath bezierPath] ;
+        [path moveToPoint:CGPointMake(center.x, center.y - 20)] ;
+        [path addArcWithCenter:center radius:15.0 startAngle:- M_PI_2 endAngle:M_PI * 1.5 clockwise:YES] ;
+        
+        CAShapeLayer * newLayer = [CAShapeLayer layer] ;
+        newLayer.fillColor = [UIColor colorWithRed:(arc4random()%255)/255.0 green:(arc4random()%255)/255.0 blue:(arc4random()%255)/255.0 alpha:0.5].CGColor ;
+        newLayer.path = path.CGPath ;
+        NSLog(@"%@",newLayer.fillColor) ;
+        NSLog(@"%@",newLayer.path) ;
+        
+        [self.shapeLayer addSublayer:newLayer] ;
+        [self.circleArr addObject:newLayer] ;
+    }
+    NSArray * cirArr = [NSArray arrayWithArray:self.circleArr] ;
+    for(CAShapeLayer * layer in cirArr){
+//        CAAnimationGroup * group = [CAAnimationGroup animation] ;
+        CABasicAnimation * fade = [CABasicAnimation animationWithKeyPath:@"fillColor"] ;
+        fade.toValue = (id)[UIColor clearColor].CGColor ;
+        fade.duration = 2.f ;
+        fade.removedOnCompletion = NO ;
+        fade.fillMode = kCAFillModeForwards ;
+        [layer addAnimation:fade forKey:nil] ;
+        
+    }
+    for(CAShapeLayer * layer in self.circleArr){
+        [layer removeFromSuperlayer] ;
+    }
+    [self.circleArr removeAllObjects] ;
 }
 
 @end
