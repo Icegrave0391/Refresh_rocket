@@ -132,10 +132,10 @@
                 [self.rockerLayer setPosition:CGPointMake(P.x, P.y -32)] ;
             }
         }
-        
+//    if(self.rockerLayer.dragDown == YES){
         [path closePath] ;
         self.shapeLayer.path = path.CGPath ;
-
+//    }
 }
 
 
@@ -162,7 +162,7 @@
     fly.delegate = self ;
     [self.rockerLayer addAnimation:fly forKey:@"fly"] ;
     [self.rockerLayer setPosition:CGPointMake(self.view.center.x, -32)] ;
-    //小圈圈出现
+    //小圈圈出现（bug
     [self setCirclesWithFrame:CGRectMake(0, 0, self.view.width, 100)] ;
     
     //手势圆圈fade
@@ -177,14 +177,37 @@
     
     if(self.scrollView.contentOffset.y < -100){
         [self.scrollView setContentOffset:CGPointMake(0, -100) animated:YES] ;
+//        CASpringAnimation * animation = [CASpringAnimation animationWithKeyPath:@"path"] ;
+//        UIBezierPath * path = [UIBezierPath bezierPath] ;
+//        [path moveToPoint:CGPointMake(0, 0)] ;
+//        [path addLineToPoint:CGPointMake(self.view.width, 0)] ;
+//        [path addLineToPoint:CGPointMake(self.view.width, 100)] ;
+//        [path addLineToPoint:CGPointMake(0, 100)] ;
+//        [path closePath] ;
+//
+//        animation.toValue = (__bridge id _Nullable)(path.CGPath) ;
+//        animation.damping = 5 ;
+//        animation.stiffness = 100 ;
+//        animation.initialVelocity = 0 ;
+//        animation.duration = animation.settlingDuration ;
+//        [self.shapeLayer addAnimation:animation forKey:@"spring"] ;
+//        self.shapeLayer.path = path.CGPath ;
+        
+        
     }else if(self. scrollView.contentOffset.y < 0){
         [self.scrollView setContentOffset:CGPointMake(0, 0) animated:YES] ;
     }
 }
 -(void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView{
     if(scrollView.contentOffset.y < -99 && scrollView.contentOffset.y > -101){
-        
-    };
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.scrollView setContentOffset:CGPointMake(0, 0) animated:YES] ;
+            NSLog(@"%f",self.scrollView.contentOffset.y) ;
+        });
+    }
+    else if(scrollView.contentOffset.y == 0){
+        self.rockerLayer.dragDown = YES ;
+    }
 }
 
 //火箭晃动处理
@@ -200,14 +223,6 @@
         }
     }
 }
-//-(void)drawCircle{
-//    CGPoint currentCenterPoint = [self.scrollView.panGestureRecognizer locationInView:self.scrollView] ;
-//
-//    UIBezierPath * path = [UIBezierPath bezierPath] ;
-//    [path moveToPoint:CGPointMake(currentCenterPoint.x, currentCenterPoint.y - 20)] ;
-//    [path addArcWithCenter:currentCenterPoint radius:15.0 startAngle:- M_PI_2 endAngle:M_PI * 1.5 clockwise:YES] ;
-//    self.circleLayer.path = path.CGPath ;
-//}
 -(void)rocketRotate{
     //抖动
         CAKeyframeAnimation * keyFram = [CAKeyframeAnimation animationWithKeyPath:@"transform.rotation.z"] ;
@@ -224,12 +239,16 @@
         [self.rockerLayer addAnimation:keyFram forKey:@"Jitter"] ;
     
 }
-
+//animation完成代理
 -(void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag{
     if([self.rockerLayer animationForKey:@"fly"] == anim){
         NSLog(@"finish") ;
         [self.rockerLayer removeAnimationForKey:@"fly"] ;
 //        self.rockerLayer = nil ;
+    }
+    
+    if([self.shapeLayer animationForKey:@"spring"] == anim){
+        NSLog(@"spring") ;
     }
 }
 
@@ -242,7 +261,11 @@
         [path addArcWithCenter:center radius:15.0 startAngle:- M_PI_2 endAngle:M_PI * 1.5 clockwise:YES] ;
         
         CAShapeLayer * newLayer = [CAShapeLayer layer] ;
-        newLayer.fillColor = [UIColor colorWithRed:(arc4random()%255)/255.0 green:(arc4random()%255)/255.0 blue:(arc4random()%255)/255.0 alpha:0.5].CGColor ;
+        CGFloat red = arc4random() / (CGFloat)INT_MAX;
+        CGFloat green = arc4random() / (CGFloat)INT_MAX;
+        CGFloat blue = arc4random() / (CGFloat)INT_MAX;
+        newLayer.fillColor = [UIColor colorWithRed:red green:green blue:blue alpha:1].CGColor ;
+//        newLayer.fillColor = [UIColor colorWithRed:(arc4random()%255)/255.0 green:(arc4random()%255)/255.0 blue:(arc4random()%255)/255.0 alpha:0.5].CGColor ;
         newLayer.path = path.CGPath ;
         NSLog(@"%@",newLayer.fillColor) ;
         NSLog(@"%@",newLayer.path) ;
